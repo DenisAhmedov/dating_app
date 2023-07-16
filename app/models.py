@@ -7,11 +7,16 @@ class Client(AbstractUser):
     sex = models.CharField(max_length=1,
                            choices=[('m', 'Male'), ('f', 'Female')],
                            default='m')
+    who_likes = models.ManyToManyField("self", related_name='whom_liked', symmetrical=False)
 
     class Meta:
         db_table = 'clients'
         verbose_name = 'Участник'
         verbose_name_plural = 'Участники'
+
+    @property
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
 
     def __str__(self):
         return f'{self.username}'
