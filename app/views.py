@@ -1,12 +1,12 @@
-from django.core.mail import send_mail
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django_filters import rest_framework as filters
 
+
+from app.filters import ClientFilter
 from app.helpers import send_mail_to_matched
 from app.models import Client
 from app.permissions import IsClientOrAdmin
@@ -22,6 +22,8 @@ class ClientCreateView(CreateAPIView):
 class GetAllClients(ListAPIView):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ClientFilter
 
 
 class ClientView(RetrieveUpdateDestroyAPIView):
