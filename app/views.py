@@ -1,3 +1,5 @@
+from math import cos, radians
+
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -24,6 +26,23 @@ class GetAllClients(ListAPIView):
     serializer_class = ClientSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = ClientFilter
+
+    def get_queryset(self):
+        try:
+            distance = float(self.request.GET.get('distance'))
+            my_longitude = self.request.user.longitude
+            my_latitude = self.request.user.latitude
+            lon1 = my_longitude - distance / abs(cos(radians(my_latitude)) * 111.0)
+            lon2 = my_longitude + distance / abs(cos(radians(my_latitude)) * 111.0)
+            lat1 = my_latitude - (distance / 111.0)
+            lat2 = my_latitude + (distance / 111.0)
+            queryset = Client.objects.filter(latitude__range=(lat1, lat2))\
+                .filter(longitude__range=(lon1, lon2))\
+                .exclude(pk=self.request.user.id)
+            return queryset
+        except TypeError:
+            queryset = Client.objects.all()
+            return queryset
 
 
 class ClientView(RetrieveUpdateDestroyAPIView):
