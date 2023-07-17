@@ -5,7 +5,7 @@ __pycache__/
 *.sqlite3
 
 # Environments
-.env
+#.env
 .venv
 env/
 venv/
