@@ -15,7 +15,10 @@ def add_watermark(image_path: str):
     drawing = ImageDraw.Draw(image)
 
     black = (3, 8, 12)
-    font = ImageFont.truetype("arial.ttf", 40, encoding="unic")
+    try:
+        font = ImageFont.truetype("arial.ttf", 40, encoding="unic")
+    except OSError:
+        font = ImageFont.load_default()
     drawing.text((0, 0), 'dating app', fill=black, font=font)
 
     image.save(os.path.join(MEDIA_ROOT, str(image_path)))

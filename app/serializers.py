@@ -45,11 +45,11 @@ class ClientSerializer(serializers.ModelSerializer):
 
     def to_representation(self, obj):
         old_repr = super().to_representation(obj)
-
-        user = self.context['request'].user
-        user_coord = (user.latitude, user.longitude)
-        self_coord = (old_repr['latitude'], old_repr['longitude'])
-        old_repr['distance'] = f'{int(GD(user_coord, self_coord).km)} km.'
+        if self.context['request'].user.is_authenticated:
+            user = self.context['request'].user
+            user_coord = (user.latitude, user.longitude)
+            self_coord = (old_repr['latitude'], old_repr['longitude'])
+            old_repr['distance'] = f'{int(GD(user_coord, self_coord).km)} km.'
 
         return old_repr
 
